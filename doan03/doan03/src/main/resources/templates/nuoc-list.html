@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hệ Thống Quản Lý Sản Phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== TỔNG THỂ ===== */
+        body {
+            margin: 0;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(30, 58, 138, 0.75)),
+                        url("https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* ===== NAVBAR GIỐNG TRONG ẢNH ===== */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+        }
+        .navbar-brand { font-weight: 800; color: #38bdf8 !important; letter-spacing: 1px; }
+        .nav-link { color: rgba(255,255,255,0.8) !important; font-weight: 600; margin: 0 10px; font-size: 14px; }
+        .nav-link:hover, .nav-link.active { color: #38bdf8 !important; }
+
+        .btn-logout {
+            background: rgba(251, 113, 133, 0.15);
+            color: #fb7185 !important;
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            border-radius: 10px;
+            padding: 5px 15px !important;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .btn-logout:hover { background: #fb7185; color: white !important; }
+
+        /* ===== NỘI DUNG CHÍNH ===== */
+        .main-content { padding-top: 120px; padding-bottom: 50px; }
+
+        .container-custom {
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            text-align: center; font-size: 32px; font-weight: 800;
+            background: linear-gradient(to right, #0ea5e9, #2563eb);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+        }
+
+        .btn-add {
+            display: inline-block; margin-bottom: 30px; padding: 12px 30px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border-radius: 15px; font-weight: 700;
+            text-decoration: none; transition: 0.3s;
+        }
+        .btn-add:hover { transform: translateY(-3px); color: white; opacity: 0.9; }
+
+        /* ===== GRID & CARD ===== */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        .card {
+            background: #ffffff; border-radius: 25px; padding: 20px; text-align: center;
+            border: 1px solid #f1f5f9; transition: 0.4s;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 15px; border-radius: 15px; }
+        .price { font-size: 20px; color: #0284c7; font-weight: 800; margin-bottom: 10px; }
+
+        .status {
+            padding: 4px 12px; border-radius: 10px; font-size: 12px; font-weight: 700;
+            background: #dcfce7; color: #16a34a; margin-bottom: 15px; display: inline-block;
+        }
+        .status.out { background: #fee2e2; color: #ef4444; }
+
+        .actions { display: flex; gap: 8px; }
+        .btn-edit { background: #facc15; color: #854d0e; flex: 1; text-decoration: none; padding: 8px; border-radius: 10px; font-weight: 700; font-size: 13px; }
+        .btn-delete { background: #fee2e2; color: #ef4444; flex: 1; text-decoration: none; padding: 8px; border-radius: 10px; font-weight: 700; font-size: 13px; }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">💧 WATER SYSTEM</a>
+        <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link active" th:href="@{/nuoc/list}">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/nha-phan-phoi/list}">Nhà phân phối</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/khach-hang/list}">Khách hàng</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/don-hang/list}">Đơn hàng</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/chi-tiet-don-hang/list}">Chi tiết đơn</a></li>
+
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link btn-logout" th:href="@{/logout}"
+                       onclick="return confirm('Bạn có muốn đăng xuất không?')">
+                        🚪 Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container container-custom">
+        <h2>DANH MỤC NƯỚC TINH KHIẾT</h2>
+
+        <div class="text-center">
+            <a th:href="@{/nuoc/add}" class="btn-add">＋ THÊM SẢN PHẨM MỚI</a>
+        </div>
+
+        <div class="grid">
+            <div class="card" th:each="n : ${list}">
+                <img th:src="${n.hinhAnh}" alt="Sản phẩm">
+                <h3 th:text="${n.tenNuoc}"></h3>
+                <div class="price" th:text="${#numbers.formatDecimal(n.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'"></div>
+                <div class="status" th:classappend="${!n.trangThai} ? 'out' : ''"
+                     th:text="${n.trangThai ? '✅ Đang bán' : '❌ Tạm hết'}"></div>
+
+                <div class="actions">
+                    <a th:href="@{/nuoc/edit/{id}(id=${n.maNuoc})}" class="btn-edit">SỬA</a>
+                    <a th:href="@{/nuoc/delete/{id}(id=${n.maNuoc})}" class="btn-delete"
+                       onclick="return confirm('Xác nhận xóa?')">XÓA</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

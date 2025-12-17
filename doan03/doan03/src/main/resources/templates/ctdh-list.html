@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Chi Tiết Đơn Hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== TỔNG THỂ (Đồng bộ WATER SYSTEM) ===== */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.85)),
+                        url('https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* ===== NAVBAR CHUẨN ===== */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+        }
+        .navbar-brand { font-weight: 800; color: #38bdf8 !important; }
+        .nav-link { color: rgba(255,255,255,0.8) !important; font-weight: 600; margin: 0 10px; }
+        .nav-link:hover, .nav-link.active { color: #38bdf8 !important; }
+
+        .btn-logout {
+            background: rgba(251, 113, 133, 0.15);
+            color: #fb7185 !important;
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            border-radius: 10px;
+            padding: 5px 15px !important;
+            font-weight: 700;
+        }
+        .btn-logout:hover { background: #fb7185; color: white !important; }
+
+        /* ===== NỘI DUNG CHÍNH ===== */
+        .main-content { padding-top: 120px; padding-bottom: 50px; }
+        .container-custom { max-width: 1100px; margin: auto; }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(90deg, #0ea5e9 0%, #2dd4bf 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .card-header-custom h2 { font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+
+        .card-body-custom { padding: 40px; }
+
+        .btn-add {
+            background: #1e293b; color: #f8fafc; border-radius: 15px;
+            padding: 12px 25px; font-weight: 700; text-decoration: none;
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;
+        }
+        .btn-add:hover { background: #334155; color: white; transform: translateY(-2px); }
+
+        /* ===== TABLE ===== */
+        .table { border-collapse: separate; border-spacing: 0 10px; }
+        .table thead th { background: transparent; color: #64748b; text-transform: uppercase; font-size: 12px; border: none; padding: 15px; }
+        .table tbody tr { background: #ffffff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .table tbody tr:hover { transform: scale(1.01); background: #f8fafc; }
+        .table td { vertical-align: middle; padding: 20px 15px; border: none; font-weight: 600; color: #1e293b; }
+        .table tr td:first-child { border-radius: 15px 0 0 15px; }
+        .table tr td:last-child { border-radius: 0 15px 15px 0; }
+
+        .order-code { background: #dbeafe; color: #1e40af; padding: 5px 12px; border-radius: 8px; font-family: monospace; font-size: 14px; }
+        .btn-edit { color: #f59e0b; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; }
+        .btn-delete { color: #ef4444; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">💧 WATER SYSTEM</a>
+        <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" th:href="@{/nuoc/list}">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/nha-phan-phoi/list}">Nhà phân phối</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/khach-hang/list}">Khách hàng</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/don-hang/list}">Đơn hàng</a></li>
+                <li class="nav-item"><a class="nav-link active" th:href="@{/chi-tiet-don-hang/list}">Chi tiết đơn</a></li>
+
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link btn-logout" th:href="@{/logout}"
+                       onclick="return confirm('Bạn có muốn đăng xuất không?')">
+                        🚪 Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container container-custom">
+        <div class="main-card">
+            <div class="card-header-custom">
+                <h2>📦 CHI TIẾT ĐƠN HÀNG</h2>
+                <p class="mb-0 opacity-75 mt-2">Quản lý số lượng và đơn giá từng mặt hàng hệ thống</p>
+            </div>
+
+            <div class="card-body-custom">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold m-0 text-dark">Danh sách chi tiết</h4>
+                    <a th:href="@{/chi-tiet-don-hang/add}" class="btn-add">
+                        <span>➕ THÊM MẶT HÀNG</span>
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table text-center">
+                        <thead>
+                        <tr>
+                            <th>Mã Đơn</th>
+                            <th class="text-start">Tên Sản Phẩm</th>
+                            <th>Số Lượng</th>
+                            <th>Đơn Giá</th>
+                            <th>Thành Tiền</th>
+                            <th>Hành Động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ct : ${list}">
+                            <td><span class="order-code" th:text="${ct.donHang.maDonHang}"></span></td>
+                            <td class="text-start">
+                                <strong th:text="${ct.nuoc.tenNuoc}"></strong>
+                            </td>
+                            <td th:text="${ct.soLuong}"></td>
+                            <td th:text="${#numbers.formatDecimal(ct.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                            <td class="text-primary fw-bold" th:text="${#numbers.formatDecimal(ct.soLuong * ct.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a th:href="@{/chi-tiet-don-hang/edit(maDonHang=${ct.donHang.maDonHang}, maNuoc=${ct.nuoc.maNuoc})}"
+                                       class="btn btn-sm btn-edit">Sửa</a>
+                                    <a th:href="@{/chi-tiet-don-hang/delete(maDonHang=${ct.donHang.maDonHang}, maNuoc=${ct.nuoc.maNuoc})}"
+                                       class="btn btn-sm btn-delete"
+                                       onclick="return confirm('Xóa dòng này khỏi đơn hàng?')">Xóa</a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${#lists.isEmpty(list)}" class="text-center py-5">
+                    <p class="text-muted italic">Chưa có chi tiết đơn hàng nào được tạo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

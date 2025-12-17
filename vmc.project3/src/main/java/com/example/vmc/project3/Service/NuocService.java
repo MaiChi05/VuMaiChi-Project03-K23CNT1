@@ -1,37 +1,44 @@
 package com.example.vmc.project3.Service;
 
-import com.example.vmc.project3.DTO.NuocDTO;
 import com.example.vmc.project3.Repository.NuocRepository;
 import com.example.vmc.project3.entity.Nuoc;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
-public class WaterService {
+public class NuocService {
 
-    private final NuocRepository waterRepository;
+    private final NuocRepository repo;
 
-    public WaterService(NuocRepository waterRepository) {
-        this.waterRepository = waterRepository;
+    public NuocService(NuocRepository repo) {
+        this.repo = repo;
     }
 
-    public List<NuocDTO> getAllAvailableWaterProducts() {
-        List<Nuoc> entities = waterRepository.findAllAvailable();
-        return entities.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public List<Nuoc> getAll() {
+        return repo.findAll();
     }
 
-    private NuocDTO convertToDTO(Nuoc entity) {
-        return new NuocDTO(
-                entity.getMa(),
-                entity.getTen(),
-                entity.getMoTa(),
-                entity.getHinhAnh(),
-                entity.getGia(),
-                entity.getSoLuong()
-        );
+    public Nuoc getById(String id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    public Nuoc add(Nuoc n) {
+        return repo.save(n);
+    }
+
+    public Nuoc update(String id, Nuoc data) {
+        Nuoc n = repo.findById(id).orElseThrow();
+
+        n.setTxenNuoc(data.getTenNuoc());
+        n.setMoTa(data.getMoTa());
+        n.setHinhAnh(data.getHinhAnh());
+        n.setGia(data.getGia());
+        n.setSoLuong(data.getSoLuong());
+        n.setTrangThai(data.getTrangThai());
+
+        return repo.save(n);
+    }
+
+    public void delete(String id) {
+        repo.deleteById(id);
     }
 }

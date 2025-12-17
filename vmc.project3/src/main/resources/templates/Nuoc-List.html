@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Danh sách nước</title>
+    <style>
+        table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+    </style>
 </head>
 <body>
-$END$
+<h1>Danh sách nước</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Mã nước</th>
+        <th>Tên nước</th>
+        <th>Mô tả</th>
+        <th>Hình ảnh</th>
+        <th>Số lượng</th>
+        <th>Giá</th>
+        <th>Trạng thái</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="nuoc : ${nuocList}">
+        <td th:text="${nuoc.maNuoc}"></td>
+        <td th:text="${nuoc.tenNuoc}"></td>
+        <td th:text="${nuoc.moTa}"></td>
+        <td>
+            <img th:src="@{/images/{hinh}(hinh=${nuoc.hinhAnh})}" alt="Hình ảnh" width="50">
+        </td>
+        <td th:text="${nuoc.soLuong}"></td>
+        <td th:text="${nuoc.gia} + ' VND'"></td>
+        <td th:text="${nuoc.trangThai == 1 ? 'Đang bán' : 'Ngừng bán'}"></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

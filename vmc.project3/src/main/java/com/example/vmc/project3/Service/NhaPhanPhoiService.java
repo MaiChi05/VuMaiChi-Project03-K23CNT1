@@ -1,34 +1,33 @@
 package com.example.vmc.project3.Service;
 
-import com.example.vmc.project3.DTO.NhaPhanPhoiDTO;
-import com.example.vmc.project3.Repository.NhaPhanPhoiRepository;
 import com.example.vmc.project3.entity.NhaPhanPhoi;
+import com.example.vmc.project3.Repository.NhaPhanPhoiRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class DistributorService {
+public class NhaPhanPhoiService {
 
-    private final NhaPhanPhoiRepository distributorRepository;
+    private final NhaPhanPhoiRepository nhaPhanPhoiRepository;
 
-    public DistributorService(NhaPhanPhoiRepository distributorRepository) {
-        this.distributorRepository = distributorRepository;
+    public NhaPhanPhoiService(NhaPhanPhoiRepository nhaPhanPhoiRepository) {
+        this.nhaPhanPhoiRepository = nhaPhanPhoiRepository;
     }
 
-    public NhaPhanPhoiDTO getFirstDistributorInfo() {
-        NhaPhanPhoi entity = distributorRepository.findFirst();
-        if (entity == null) {
-            return null;
-        }
-        return convertToDTO(entity);
+    public List<NhaPhanPhoi> layTatCaNhaPhanPhoi() {
+        return nhaPhanPhoiRepository.findAll();
     }
 
-    private NhaPhanPhoiDTO convertToDTO(NhaPhanPhoi entity) {
-        return new NhaPhanPhoiDTO(
-                entity.getMa(),
-                entity.getTen(),
-                entity.getEmail(),
-                entity.getSoDienThoai(),
-                entity.getDiaChi()
-        );
+    public NhaPhanPhoi layNhaPhanPhoiTheoId(String maNhaPhanPhoi) {
+        return nhaPhanPhoiRepository.findById(maNhaPhanPhoi).orElse(null);
+    }
+
+    public NhaPhanPhoi themHoacSuaNhaPhanPhoi(NhaPhanPhoi nhaPhanPhoi) {
+        return nhaPhanPhoiRepository.save(nhaPhanPhoi);
+    }
+
+    public void xoaNhaPhanPhoi(String maNhaPhanPhoi) {
+        nhaPhanPhoiRepository.deleteById(maNhaPhanPhoi);
     }
 }

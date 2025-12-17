@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hệ Thống Quản Lý Đơn Hàng | Water System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS ĐỒNG BỘ WATER SYSTEM */
+        body {
+            margin: 0; min-height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(30, 58, 138, 0.75)),
+                        url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-attachment: fixed;
+        }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 0;
+        }
+        .navbar-brand { font-weight: 800; color: #38bdf8 !important; }
+
+        .main-content { padding-top: 120px; padding-bottom: 50px; }
+
+        .page-header {
+            background: linear-gradient(90deg, #0ea5e9 0%, #2563eb 100%);
+            color: white; padding: 40px; border-radius: 30px 30px 0 0; text-align: center;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.98); padding: 40px;
+            border-radius: 0 0 30px 30px; box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+        }
+
+        /* TABLE CUSTOM */
+        .table { border-collapse: separate; border-spacing: 0 12px; }
+        .table thead th { background: transparent; color: #64748b; font-size: 13px; font-weight: 800; text-transform: uppercase; border: none; padding: 15px; }
+        .table tbody tr { background-color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .table tbody tr:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .table td { vertical-align: middle; padding: 20px 15px; border: none; }
+        .table tbody tr td:first-child { border-radius: 15px 0 0 15px; border-left: 5px solid #0ea5e9; }
+        .table tbody tr td:last-child { border-radius: 0 15px 15px 0; }
+
+        .badge-status { padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 800; }
+        .status-done { background: #dcfce7; color: #16a34a; }
+        .status-pending { background: #fff7ed; color: #ea580c; }
+
+        .btn-add { background: #10b981; color: white; border-radius: 12px; padding: 12px 25px; font-weight: 700; text-decoration: none; }
+        .btn-edit { background: #fef9c3; color: #a16207; border-radius: 10px; padding: 8px 15px; text-decoration: none; font-weight: 700; }
+        .btn-delete { background: #fee2e2; color: #ef4444; border-radius: 10px; padding: 8px 15px; text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">💧 WATER SYSTEM</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link text-white" th:href="@{/nuoc/list}">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link active text-info" th:href="@{/don-hang/list}">Đơn hàng</a></li>
+                <li class="nav-item ms-3"><a class="btn btn-outline-danger" th:href="@{/logout}">Đăng xuất</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container" style="max-width: 1100px;">
+        <div class="page-header">
+            <h2>📦 QUẢN LÝ VẬN ĐƠN</h2>
+        </div>
+
+        <div class="content-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold">Danh sách đơn hàng</h4>
+                <a th:href="@{/don-hang/add}" class="btn-add">＋ TẠO ĐƠN MỚI</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr class="text-center">
+                        <th>Mã Đơn</th>
+                        <th class="text-start">Khách Hàng</th>
+                        <th>Ngày Đặt</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="dh : ${list}" class="text-center">
+                        <td><b class="text-primary" th:text="${dh.maDonHang}"></b></td>
+                        <td class="text-start">
+                            <div class="fw-bold" th:text="${dh.khachHang != null ? dh.khachHang.tenKhachHang : 'N/A'}"></div>
+                        </td>
+                        <td th:text="${dh.ngayDat != null ? #temporals.format(dh.ngayDat, 'dd/MM/yyyy') : '---'}"></td>
+                        <td>
+                                <span th:class="'badge-status ' + (${dh.trangThai} ? 'status-done' : 'status-pending')"
+                                      th:text="${dh.trangThai} ? '✅ Hoàn tất' : '⏳ Chờ xử lý'">
+                                </span>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a th:href="@{/don-hang/edit/{id}(id=${dh.maDonHang})}" class="btn-edit">SỬA</a>
+                                <a th:href="@{/don-hang/delete/{id}(id=${dh.maDonHang})}" class="btn-delete"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')">XÓA</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${#lists.isEmpty(list)}" class="text-center py-5">
+                <p class="text-muted">Chưa có đơn hàng nào trong hệ thống.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

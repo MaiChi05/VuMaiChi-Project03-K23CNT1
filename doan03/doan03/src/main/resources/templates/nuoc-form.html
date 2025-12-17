@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Sản Phẩm Nước</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            background-image: url("https://images.unsplash.com/photo-1544148103-0773bf10d330");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Lớp phủ đa sắc thái giúp ảnh nền đậm nét và chuyên nghiệp hơn */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 58, 138, 0.7));
+            z-index: -1;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 480px;
+            /* Hiệu ứng kính mờ (Glassmorphism) */
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #0ea5e9, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .label-text {
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 13px 16px;
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus {
+            border-color: #0ea5e9;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+            outline: none;
+            transform: scale(1.01);
+        }
+
+        /* Tùy chỉnh checkbox đẹp hơn */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            cursor: pointer;
+            font-weight: 700;
+            color: #334155;
+            transition: 0.3s;
+        }
+
+        .checkbox-group:hover {
+            color: #0ea5e9;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #0ea5e9;
+            cursor: pointer;
+        }
+
+        .actions {
+            margin-top: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-back {
+            text-align: center;
+            color: #64748b;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            color: #1e293b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="form-container">
+    <h2 th:text="${nuoc.maNuoc == null ? '➕ Thêm sản phẩm' : '📝 Cập nhật sản phẩm'}"></h2>
+
+    <form th:action="@{/nuoc/save}" th:object="${nuoc}" method="post">
+
+        <div class="form-group">
+            <span class="label-text">Mã nước</span>
+            <input type="text" th:field="*{maNuoc}" placeholder="VD: AQUA-01" required
+                   th:readonly="${nuoc.maNuoc != null}">
+        </div>
+
+        <div class="form-group">
+            <span class="label-text">Tên sản phẩm</span>
+            <input type="text" th:field="*{tenNuoc}" placeholder="Nhập tên loại nước..." required>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-6" style="padding-right: 10px;">
+                <span class="label-text">Đơn giá (VNĐ)</span>
+                <input type="number" th:field="*{gia}" placeholder="0" required>
+            </div>
+
+            <div class="form-group col-6">
+                <span class="label-text">Số lượng kho</span>
+                <input type="number" th:field="*{soLuong}" placeholder="0">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="label-text">Link hình ảnh (URL)</span>
+            <input type="text" th:field="*{hinhAnh}" placeholder="https://...">
+        </div>
+
+        <label class="checkbox-group">
+            <input type="checkbox" th:field="*{trangThai}">
+            <span>Sẵn sàng kinh doanh</span>
+        </label>
+
+        <div class="actions">
+            <button type="submit">Lưu thông tin sản phẩm</button>
+            <a th:href="@{/nuoc/list}" class="btn-back">⬅ Quay lại danh sách</a>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Form nước</title>
 </head>
 <body>
-$END$
+<h1 th:text="${nuocForm.maNuoc != null ? 'Sửa nước' : 'Thêm nước'}"></h1>
+
+<form th:action="@{/nuoc-view/save}" th:object="${nuocForm}" method="post">
+    <label>Mã nước: </label>
+    <input type="text" th:field="*{maNuoc}" required /><br/>
+    <label>Tên nước: </label>
+    <input type="text" th:field="*{tenNuoc}" required /><br/>
+    <label>Số lượng: </label>
+    <input type="number" th:field="*{soLuong}" min="0" /><br/>
+    <label>Giá: </label>
+    <input type="number" th:field="*{gia}" step="1000" /><br/>
+    <label>Trạng thái: </label>
+    <select th:field="*{trangThai}">
+        <option value="1">Đang bán</option>
+        <option value="0">Ngừng bán</option>
+    </select><br/><br/>
+    <button type="submit">Lưu</button>
+</form>
+
+<br/>
+<a th:href="@{/nuoc-view/danh-sach}">Quay về danh sách</a>
 </body>
 </html>

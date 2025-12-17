@@ -1,26 +1,46 @@
 package com.example.vmc.project3.Controller;
 
-import com.example.vmc.project3.DTO.NuocDTO;
+import com.example.vmc.project3.entity.Nuoc;
 import com.example.vmc.project3.Service.NuocService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-public class WaterController {
+@RestController
+@RequestMapping("/nuoc")
+public class NuocController {
 
-    private final NuocService waterService;
+    private final NuocService nuocService;
 
-    public WaterController(NuocService waterService) {
-        this.waterService = waterService;
+    public NuocController(NuocService nuocService) {
+        this.nuocService = nuocService;
     }
 
-    @GetMapping("/water")
-    public String showWaterList(Model model) {
-        List<NuocDTO> waterList = waterService.getAllAvailableWaterProducts();
-        model.addAttribute("waterList", waterList);
-        return "water-list"; // Spring tìm /WEB-INF/views/water-list.jsp
+    @GetMapping("/danh-sach")
+    public List<Nuoc> layTatCaNuoc() {
+        return nuocService.getAllNuoc();
+    }
+
+    @GetMapping("/{maNuoc}")
+    public Nuoc layNuocTheoId(@PathVariable String maNuoc) {
+        return nuocService.getNuocById(maNuoc);
+    }
+
+    @PostMapping("/them")
+    public Nuoc themNuoc(@RequestBody Nuoc nuoc) {
+        return nuocService.saveNuoc(nuoc);
+    }
+
+    @PutMapping("/sua/{maNuoc}")
+    public Nuoc suaNuoc(
+            @PathVariable String maNuoc,
+            @RequestBody Nuoc nuoc
+    ) {
+        return nuocService.updateNuoc(maNuoc, nuoc);
+    }
+
+    @DeleteMapping("/xoa/{maNuoc}")
+    public void xoaNuoc(@PathVariable String maNuoc) {
+        nuocService.deleteNuoc(maNuoc);
     }
 }

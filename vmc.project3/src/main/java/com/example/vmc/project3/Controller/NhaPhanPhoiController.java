@@ -1,24 +1,44 @@
 package com.example.vmc.project3.Controller;
 
-import com.example.vmc.project3.DTO.NhaPhanPhoiDTO;
+import com.example.vmc.project3.entity.NhaPhanPhoi;
 import com.example.vmc.project3.Service.NhaPhanPhoiService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-public class DistributorController {
+import java.util.List;
 
-    private final NhaPhanPhoiService distributorService;
+@RestController
+@RequestMapping("/nha-phan-phoi")
+public class NhaPhanPhoiController {
 
-    public DistributorController(NhaPhanPhoiService distributorService) {
-        this.distributorService = distributorService;
+    private final NhaPhanPhoiService nhaPhanPhoiService;
+
+    public NhaPhanPhoiController(NhaPhanPhoiService nhaPhanPhoiService) {
+        this.nhaPhanPhoiService = nhaPhanPhoiService;
     }
 
-    @GetMapping("/distributor")
-    public String showDistributorInfo(Model model) {
-        NhaPhanPhoiDTO distributor = distributorService.getFirstDistributorInfo();
-        model.addAttribute("distributor", distributor);
-        return "distributor-info"; // JSP: /WEB-INF/views/distributor-info.jsp
+    @GetMapping("/danh-sach")
+    public List<NhaPhanPhoi> layTatCa() {
+        return nhaPhanPhoiService.layTatCaNhaPhanPhoi();
+    }
+
+    @GetMapping("/{maNhaPhanPhoi}")
+    public NhaPhanPhoi layTheoId(@PathVariable String maNhaPhanPhoi) {
+        return nhaPhanPhoiService.layNhaPhanPhoiTheoId(maNhaPhanPhoi);
+    }
+
+    @PostMapping("/them")
+    public NhaPhanPhoi them(@RequestBody NhaPhanPhoi nhaPhanPhoi) {
+        return nhaPhanPhoiService.themHoacSuaNhaPhanPhoi(nhaPhanPhoi);
+    }
+
+    @PutMapping("/sua/{maNhaPhanPhoi}")
+    public NhaPhanPhoi sua(@PathVariable String maNhaPhanPhoi, @RequestBody NhaPhanPhoi nhaPhanPhoi) {
+        nhaPhanPhoi.setMaNhaPhanPhoi(maNhaPhanPhoi);
+        return nhaPhanPhoiService.themHoacSuaNhaPhanPhoi(nhaPhanPhoi);
+    }
+
+    @DeleteMapping("/xoa/{maNhaPhanPhoi}")
+    public void xoa(@PathVariable String maNhaPhanPhoi) {
+        nhaPhanPhoiService.xoaNhaPhanPhoi(maNhaPhanPhoi);
     }
 }
